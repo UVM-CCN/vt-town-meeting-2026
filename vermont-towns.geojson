@@ -1,0 +1,135 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Montpelier",
+        "participation": 78,
+        "population": 7855,
+        "attendance": 450
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.5753, 44.2558]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Burlington",
+        "participation": 82,
+        "population": 45857,
+        "attendance": 2100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.2121, 44.4759]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rutland",
+        "participation": 65,
+        "population": 15893,
+        "attendance": 800
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.1934, 43.6101]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bennington",
+        "participation": 71,
+        "population": 15387,
+        "attendance": 900
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.3754, 42.8781]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Brattleboro",
+        "participation": 76,
+        "population": 12046,
+        "attendance": 700
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.5597, 42.8449]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bellows Falls",
+        "participation": 58,
+        "population": 3034,
+        "attendance": 150
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.4437, 43.1424]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Manchester",
+        "participation": 68,
+        "population": 4381,
+        "attendance": 250
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.0738, 43.1631]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Woodstock",
+        "participation": 85,
+        "population": 3237,
+        "attendance": 220
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.5130, 43.6337]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "St. Johnsbury",
+        "participation": 72,
+        "population": 7571,
+        "attendance": 450
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.0158, 44.4171]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Newport",
+        "participation": 55,
+        "population": 4437,
+        "attendance": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.2145, 44.9359]
+      }
+    }
+  ]
+}
