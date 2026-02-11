@@ -24,15 +24,21 @@ An interactive static website displaying Vermont Town Meeting Day results and pa
 └── LICENSE                 # License file
 ```
 
-## Data Source
+## Data Sources
 
-The `vermont-towns.geojson` file contains official Vermont town boundaries sourced from:
-
+### Town Boundaries
 - **Source**: [VT Data - Town Boundaries](https://geodata.vermont.gov/datasets/VCGI::vt-data-town-boundaries-1/about)
 - **Provider**: Vermont Center for Geographic Information (VCGI)
 - **Dataset**: FS_VCGI_OPENDATA_Boundary_BNDHASH_poly_towns_SP_v1
 - **Features**: 256 Vermont towns with accurate polygon boundaries
 - **Format**: GeoJSON with town properties and geometric boundaries
+
+### Population Data
+- **Source**: [List of municipalities in Vermont](https://en.wikipedia.org/wiki/List_of_municipalities_in_Vermont)
+- **Data**: 2020 U.S. Census population figures
+- **Coverage**: 237 of 256 Vermont municipalities (19 unincorporated/very small towns have no population data)
+
+## Data Integration
 
 ### GeoJSON Properties
 
@@ -47,9 +53,21 @@ Each feature in the GeoJSON contains the following properties from VCGI:
   "CNTY": 21,
   "TOWNGEOID": "5002157250",
   "Shape__Area": 19627122.625659943,
-  "Shape__Length": 32988.08634250913
+  "Shape__Length": 32988.08634250913,
+  "population": 1763
 }
 ```
+
+**Field Descriptions:**
+- `OBJECTID`: Unique feature identifier
+- `FIPS6`: Federal Information Processing Standard 6-digit code (unique town identifier)
+- `TOWNNAME`: Town name in uppercase (e.g., "PROCTOR")
+- `TOWNNAMEMC`: Town name in mixed case (e.g., "Proctor") - **Used for display on the map**
+- `CNTY`: County code numeric identifier
+- `TOWNGEOID`: Census tract identifier
+- `Shape__Area`: Polygon area in square units
+- `Shape__Length`: Polygon perimeter in linear units
+- `population`: Population data from Wikipedia (2020 Census)
 
 ### Adding Custom Meeting Data
 

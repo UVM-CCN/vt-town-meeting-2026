@@ -60,11 +60,16 @@ function getStyleForFeature(feature) {
 function onEachFeature(feature, layer) {
     // Create popup content
     const props = feature.properties;
+    const townName = props.TOWNNAMEMC || props.TOWNNAME || 'Unknown Town';
+    const population = props.population;
+    const participation = props.participation || 0;
+    const populationText = population !== null && population !== undefined ? population.toLocaleString() : 'No data';
+    
     const popupContent = `
         <div class="town-popup">
-            <h3>${props.name || 'Unknown Town'}</h3>
-            <p><strong>Participation:</strong> ${props.participation || 'N/A'}%</p>
-            <p><strong>Population:</strong> ${props.population || 'N/A'}</p>
+            <h3>${townName}</h3>
+            <p><strong>Population:</strong> ${populationText}</p>
+            <p><strong>Participation:</strong> ${participation}%</p>
             <p><strong>Attendance:</strong> ${props.attendance || 'N/A'}</p>
         </div>
     `;
