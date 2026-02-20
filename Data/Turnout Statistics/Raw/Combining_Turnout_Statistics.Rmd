@@ -261,7 +261,7 @@ turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx",
     "ballot_mailed_to_all_reg_voters" = "Was a ballot mailed to every active registered voter? (Y/N)"
   ) |> 
   mutate(
-    year = 2023,
+    year = 2024,
     tm_checklist_voters = as.numeric(tm_checklist_voters),
     num_voted = as.numeric(num_voted),
     absentee_votes = as.numeric(absentee_votes),
@@ -278,6 +278,46 @@ turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx",
   )
 ```
 
+```{r}
+turnout_2025 <- read.csv("2025_annual_meeting_turnout_statistics.csv") |> 
+  rename(
+    "tm_checklist_voters" = "How.many.voters.were.on.your.Town.Meeting.checklist.",
+    "highest_flr_vote_count" = "Floor.vote.towns...By.your.best.estimate..what.was.the.highest.vote.count.",
+    "ab_towns_num_voted" = "Australian.ballot.towns...How.many.people.voted..including.absentee.ballots..",
+    "ab_towns_num_absentee" = "Australian.ballot.towns...How.many.voted.by.absentee.ballot.",
+    "ballot_mailed_to_all_reg_voters"="Australian.ballot.towns...Did.your.town.mail.absentee.ballots.to.all.active.registered.voters.on.your.checklist."
+  ) |> 
+  mutate(
+    year = 2025,
+    across(
+      c(tm_checklist_voters,
+        highest_flr_vote_count,
+        ab_towns_num_voted,
+        ab_towns_num_absentee,
+        Floor.Vote.Turnout....,
+        Australian.Ballot.Turnout....,
+        Absentee.Ballot.Turnout..,
+        ),
+      ~parse_number(.x,
+        na = c("N/A","NA","n/a",""," ","—","-","None")
+      )
+    ),
+    ballot_mailed_to_all_reg_voters = case_when(
+      ballot_mailed_to_all_reg_voters == "Yes" ~ 1,
+      ballot_mailed_to_all_reg_voters == "No" ~ 0,
+      ballot_mailed_to_all_reg_voters == "N/A" ~ NA,
+      TRUE ~ 2
+    )
+  ) |> 
+  pivot_longer(
+    cols = -c(`City.Town`, year),
+    names_to = "Statistic",
+    values_to = "Value"
+  ) |> 
+  rename("Town or City" = `City.Town`)
+```
+
+
 
 
 ## Combine Datasets
@@ -285,16 +325,14 @@ turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx",
 combined_df <- bind_rows(
   turnout_2014, turnout_2015, turnout_2016,
   turnout_2017, turnout_2018, turnout_2019, 
-  turnout_2020, turnout_2022, turnout_2023, 
-  turnout_2024
+  turnout_2020, turnout_2021, turnout_2022, 
+  turnout_2023, turnout_2024, turnout_2025
 ) |> 
   rename("town_city" = "Town or City") |> 
   mutate(
     Value = round(Value, 3),
     town_city = str_to_title(town_city)
   )
-
-tibble(combined_df)
 ```
 
 
@@ -302,15 +340,15 @@ tibble(combined_df)
 ```{r}
 df_towns <- 
   combined_df |> 
-  filter(!str_detect(town_city, "Australian"))
+  filter(!str_detect(town_city, "Australian")) |> 
+  janitor::clean_names()
 
 australian_vote_totals_by_year <- 
   combined_df |> 
   filter(str_detect(town_city, "Australian") & !is.na(Value)) |> 
-  select(-town_city) |> 
-  rename("Year" = "year")
+  dplyr::select(-town_city) |> 
+  janitor::clean_names()
 ```
-
 
 ## Write Long Format Dataset to CSV
 ```{r}

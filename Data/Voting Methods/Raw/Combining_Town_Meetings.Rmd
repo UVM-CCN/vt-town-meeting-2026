@@ -25,29 +25,32 @@ methods_2018 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", ski
   slice(-1) |> 
   mutate(year = 2018)
 
-methods_2019 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2019 <- readxl::read_xlsx("2019_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2019)
 
-methods_2020 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2020 <- readxl::read_xlsx("2020_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2020)
   
-methods_2021 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2021 <- readxl::read_xlsx("2021_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2021)
   
-methods_2022 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2022 <- readxl::read_xlsx("2022_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2022)
   
-methods_2023 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2023 <- readxl::read_xlsx("2023_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2023)
   
-methods_2024 <- readxl::read_xlsx("2018_annual_meeting_voting_methods.xlsx", skip = 1) |> 
+methods_2024 <- readxl::read_xlsx("2024_annual_meeting_voting_methods.xlsx", skip = 1) |> 
   slice(-1) |> 
   mutate(year = 2024)
+
+methods_2025 <- read.csv("2025_annual_meeting_voting_methods.csv") |> 
+  mutate(year = 2025)
   
 ```
 
