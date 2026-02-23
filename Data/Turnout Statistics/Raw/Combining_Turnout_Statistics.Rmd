@@ -17,17 +17,17 @@ pacman::p_load(tidyverse, sf, glue, purrr, readxl, stringr, janitor, readr)
 
 ## Reading Datasets
 ```{r}
-turnout_2014 <- readxl::read_xlsx("2014_town_meeting_turnout_statistics.xlsx") |> 
+turnout_2014 <- readxl::read_xlsx("2014_town_meeting_turnout_statistics.xlsx") |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/4/14?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2014,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -37,17 +37,17 @@ turnout_2014 <- readxl::read_xlsx("2014_town_meeting_turnout_statistics.xlsx") |
 
 
 ```{r}
-turnout_2015 <- readxl::read_xlsx("2015_town_meeting_turnout_statistics.xlsx") |> 
+turnout_2015 <- readxl::read_xlsx("2015_town_meeting_turnout_statistics.xlsx") |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/3/15?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2015,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -57,17 +57,17 @@ turnout_2015 <- readxl::read_xlsx("2015_town_meeting_turnout_statistics.xlsx") |
 
 
 ```{r}
-turnout_2016 <- readxl::read_xlsx("2016_town_meeting_turnout_statistics.xlsx") |> 
+turnout_2016 <- readxl::read_xlsx("2016_town_meeting_turnout_statistics.xlsx") |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/1/16?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2016,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -77,17 +77,17 @@ turnout_2016 <- readxl::read_xlsx("2016_town_meeting_turnout_statistics.xlsx") |
 
 
 ```{r}
-turnout_2017 <- readxl::read_xlsx("2017_town_meeting_turnout_statistics.xlsx") |> 
+turnout_2017 <- readxl::read_xlsx("2017_town_meeting_turnout_statistics.xlsx") |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/7/17?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2017,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -97,17 +97,17 @@ turnout_2017 <- readxl::read_xlsx("2017_town_meeting_turnout_statistics.xlsx") |
 
 
 ```{r}
-turnout_2018 <- readxl::read_xlsx("2018_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2018 <- readxl::read_xlsx("2018_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/6/18?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2018,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -117,17 +117,17 @@ turnout_2018 <- readxl::read_xlsx("2018_annual_meeting_turnout_statistics.xlsx",
 
 
 ```{r}
-turnout_2019 <- readxl::read_xlsx("2019_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2019 <- readxl::read_xlsx("2019_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/6/18?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2019,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -137,19 +137,19 @@ turnout_2019 <- readxl::read_xlsx("2019_annual_meeting_turnout_statistics.xlsx",
 
 
 ```{r}
-turnout_2020 <- readxl::read_xlsx("2020_annual_meeting_turnout_statistics.xlsx", skip=2) |> 
+turnout_2020 <- readxl::read_xlsx("2020_annual_meeting_turnout_statistics.xlsx", skip = 2) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist 3/3/20?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count? (your best estimate)",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_absentee_votes" = "For Australian ballot towns: how many voted by absentee ballot?"
-  ) |> 
+  ) |>
   mutate(
     year = 2020,
     highest_flr_vote_count = as.numeric(highest_flr_vote_count),
     tm_checklist_voters = parse_number(tm_checklist_voters),
     ab_towns_num_voted = parse_number(ab_towns_num_voted)
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -159,14 +159,14 @@ turnout_2020 <- readxl::read_xlsx("2020_annual_meeting_turnout_statistics.xlsx",
 
 
 ```{r}
-turnout_2021 <- readxl::read_xlsx("2021_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2021 <- readxl::read_xlsx("2021_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist on the date of your Town Meeting?",
     "num_voted" = "How many people voted (include absentee ballot)?",
     "absentee_votes" = "How many voted by absentee ballot?",
     "ballot_mailed_to_all_reg_voters" = "Was a ballot mailed to every active registered voter? (Y/N)",
     "first_time_ab_from_COVID" = "Did your town use Australian Ballot voting for the first time in 2021 due to COVID-19? (Y/N)"
-  ) |> 
+  ) |>
   mutate(
     year = 2021,
     num_voted = parse_number(num_voted),
@@ -182,7 +182,7 @@ turnout_2021 <- readxl::read_xlsx("2021_annual_meeting_turnout_statistics.xlsx",
       first_time_ab_from_COVID == "NO" ~ 0,
       TRUE ~ 2
     )
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -196,14 +196,14 @@ no <- c("NO", "No", "n0", "no")
 yes <- c("Yes", "yes", "y", "YES")
 missing <- c("Belvidere", "N/A", NA)
 
-turnout_2022 <- readxl::read_xlsx("2022_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2022 <- readxl::read_xlsx("2022_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist on the date of your Town Meeting?",
     "highest_flr_vote_count" = "For floor meeting towns: what was the highest vote count?",
     "ab_towns_num_voted" = "For Australian ballot towns: how many people voted (include absentee ballot)?",
     "ab_towns_num_absentee" = "For Australian ballot towns: how many voted by absentee ballot?",
     "ballot_mailed_to_all_reg_voters" = "Did your town mail absentee ballots to all active registered voters on your checklist?"
-  ) |> 
+  ) |>
   mutate(
     year = 2022,
     tm_checklist_voters = parse_number(tm_checklist_voters),
@@ -216,7 +216,7 @@ turnout_2022 <- readxl::read_xlsx("2022_annual_meeting_turnout_statistics.xlsx",
       ballot_mailed_to_all_reg_voters %in% missing ~ NA,
       TRUE ~ 2
     )
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -226,13 +226,13 @@ turnout_2022 <- readxl::read_xlsx("2022_annual_meeting_turnout_statistics.xlsx",
 
 
 ```{r}
-turnout_2023 <- readxl::read_xlsx("2023_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2023 <- readxl::read_xlsx("2023_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist on the date of your Town Meeting?",
     "num_voted" = "How many people voted (include absentee ballot)?",
     "absentee_votes" = "How many voted by absentee ballot?",
     "ballot_mailed_to_all_reg_voters" = "Was a ballot mailed to every active registered voter? (Y/N)"
-  ) |> 
+  ) |>
   mutate(
     year = 2023,
     tm_checklist_voters = as.numeric(tm_checklist_voters),
@@ -243,7 +243,7 @@ turnout_2023 <- readxl::read_xlsx("2023_annual_meeting_turnout_statistics.xlsx",
       ballot_mailed_to_all_reg_voters == "No" ~ 0,
       TRUE ~ NA
     )
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
@@ -253,15 +253,15 @@ turnout_2023 <- readxl::read_xlsx("2023_annual_meeting_turnout_statistics.xlsx",
 
 
 ```{r}
-turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx", skip=1) |> 
+turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx", skip = 1) |>
   rename(
     "tm_checklist_voters" = "How many voters were on your TM checklist on the date of your Town Meeting?",
     "num_voted" = "How many people voted (include absentee ballot)?",
     "absentee_votes" = "How many voted by absentee ballot?",
     "ballot_mailed_to_all_reg_voters" = "Was a ballot mailed to every active registered voter? (Y/N)"
-  ) |> 
+  ) |>
   mutate(
-    year = 2023,
+    year = 2024,
     tm_checklist_voters = as.numeric(tm_checklist_voters),
     num_voted = as.numeric(num_voted),
     absentee_votes = as.numeric(absentee_votes),
@@ -270,13 +270,54 @@ turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx",
       ballot_mailed_to_all_reg_voters == "No" ~ 0,
       TRUE ~ NA
     )
-  ) |> 
+  ) |>
   pivot_longer(
     cols = -c(`Town or City`, year),
     names_to = "Statistic",
     values_to = "Value"
   )
 ```
+
+```{r}
+turnout_2025 <- read.csv("2025_annual_meeting_turnout_statistics.csv") |>
+  rename(
+    "tm_checklist_voters" = "How.many.voters.were.on.your.Town.Meeting.checklist.",
+    "highest_flr_vote_count" = "Floor.vote.towns...By.your.best.estimate..what.was.the.highest.vote.count.",
+    "ab_towns_num_voted" = "Australian.ballot.towns...How.many.people.voted..including.absentee.ballots..",
+    "ab_towns_num_absentee" = "Australian.ballot.towns...How.many.voted.by.absentee.ballot.",
+    "ballot_mailed_to_all_reg_voters" = "Australian.ballot.towns...Did.your.town.mail.absentee.ballots.to.all.active.registered.voters.on.your.checklist."
+  ) |>
+  mutate(
+    year = 2025,
+    across(
+      c(
+        tm_checklist_voters,
+        highest_flr_vote_count,
+        ab_towns_num_voted,
+        ab_towns_num_absentee,
+        Floor.Vote.Turnout....,
+        Australian.Ballot.Turnout....,
+        Absentee.Ballot.Turnout..,
+      ),
+      ~ parse_number(.x,
+        na = c("N/A", "NA", "n/a", "", " ", "—", "-", "None")
+      )
+    ),
+    ballot_mailed_to_all_reg_voters = case_when(
+      ballot_mailed_to_all_reg_voters == "Yes" ~ 1,
+      ballot_mailed_to_all_reg_voters == "No" ~ 0,
+      ballot_mailed_to_all_reg_voters == "N/A" ~ NA,
+      TRUE ~ 2
+    )
+  ) |>
+  pivot_longer(
+    cols = -c(`City.Town`, year),
+    names_to = "Statistic",
+    values_to = "Value"
+  ) |>
+  rename("Town or City" = `City.Town`)
+```
+
 
 
 
@@ -284,40 +325,36 @@ turnout_2024 <- readxl::read_xlsx("2024_annual_meeting_turnout_statistics.xlsx",
 ```{r}
 combined_df <- bind_rows(
   turnout_2014, turnout_2015, turnout_2016,
-  turnout_2017, turnout_2018, turnout_2019, 
-  turnout_2020, turnout_2022, turnout_2023, 
-  turnout_2024
-) |> 
-  rename("town_city" = "Town or City") |> 
+  turnout_2017, turnout_2018, turnout_2019,
+  turnout_2020, turnout_2021, turnout_2022,
+  turnout_2023, turnout_2024, turnout_2025
+) |>
+  rename("town_city" = "Town or City") |>
   mutate(
     Value = round(Value, 3),
     town_city = str_to_title(town_city)
   )
-
-tibble(combined_df)
 ```
 
 
 
 ```{r}
-df_towns <- 
-  combined_df |> 
-  filter(!str_detect(town_city, "Australian"))
+df_towns <-
+  combined_df |>
+  filter(!str_detect(town_city, "Australian")) |>
+  janitor::clean_names()
 
-australian_vote_totals_by_year <- 
-  combined_df |> 
-  filter(str_detect(town_city, "Australian") & !is.na(Value)) |> 
-  select(-town_city) |> 
-  rename("Year" = "year")
+australian_vote_totals_by_year <-
+  combined_df |>
+  filter(str_detect(town_city, "Australian") & !is.na(Value)) |>
+  dplyr::select(-town_city) |>
+  janitor::clean_names()
 ```
-
 
 ## Write Long Format Dataset to CSV
 ```{r}
-
-write_csv(df_towns, "town_meeting_turnout_stats_long.csv")
-write_csv(australian_vote_totals_by_year, "statewide_aus_vote_totals_by_year.csv")
-
+# write_csv(df_towns, "town_meeting_turnout_stats_long.csv")
+# write_csv(australian_vote_totals_by_year, "statewide_aus_vote_totals_by_year.csv")
 ```
 
 

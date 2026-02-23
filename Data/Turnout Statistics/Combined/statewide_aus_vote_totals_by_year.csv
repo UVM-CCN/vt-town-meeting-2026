@@ -1,4 +1,4 @@
-Year,Statistic,Value
+year,statistic,value
 2014,tm_checklist_voters,347131
 2014,ab_towns_num_voted,83211
 2014,Australian ballot Turnout (%),0.24
@@ -34,3 +34,10 @@ Year,Statistic,Value
 2020,Australian ballot Turnout (%),0.369
 2020,ab_towns_absentee_votes,24123
 2020,Absentee Ballot Turnout (%),0.181
+2021,tm_checklist_voters,349452
+2021,num_voted,97168
+2021,Turnout (%),0.278
+2021,absentee_votes,63668
+2021,Absentee Ballot Turnout (%),0.655
+2021,ballot_mailed_to_all_reg_voters,2
+2021,first_time_ab_from_COVID,2
