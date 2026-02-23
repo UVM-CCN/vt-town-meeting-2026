@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vermont Town Meeting Day 2026 Results</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <div class="container">
             <h1>Vermont Town Meeting Day 2026</h1>
-            <p class="subtitle">Interactive Results by Municipality</p>
+            <p class="subtitle">Interactive Turnout Statistics & Polling Locations</p>
         </div>
     </header>
 
@@ -19,15 +20,30 @@
         <div class="container">
             <p class="intro-text">
                 Vermont Town Meeting Day, celebrated annually on the first Tuesday in March, is a cornerstone of 
-                New England democratic tradition. This interactive map displays the results and participation data 
-                from municipalities across Vermont, showcasing the engagement and decisions made during this important 
-                civic event. Explore each town to view voting results, attendance figures, and key articles discussed.
+                New England democratic tradition. This interactive map displays historical turnout statistics 
+                from municipalities across Vermont. Explore each town to view Australian ballot, floor vote, and 
+                absentee ballot turnout rates. Red markers indicate polling locations. Use the year selector to 
+                compare turnout across different years.
             </p>
         </div>
     </section>
-
+    <div class="container">
+        <div id="town-search">
+            <input type="text" placeholder="Search for a town..." id="town-search-input">
+            <button id="town-search-button" onclick="zoomToTown(document.getElementById('town-search-input').value)">Search</button>
+        </div>
+    </div>
     <section class="map-section">
         <div id="map"></div>
+        <div id="map-sidebar">
+            <p id="map-sidebar-placholder">Select a town to learn more</p>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="container">
+            <div id="avg-turnout-chart"></div>
+        </div>
     </section>
 
     <footer>
