@@ -2,6 +2,7 @@ let map;
 let geojsonLayer;
 let pollingPlacesLayer;
 let turnoutData = {};
+let populationData = {};
 let selectedYear = '2024';
 let vermontGeoJSONData = null;
 let layersVisible = {
@@ -59,13 +60,46 @@ function loadTurnoutData() {
         .then(response => response.text())
         .then(csvData => {
             parseTurnoutData(csvData);
-            loadVermontGeoJSON();
+            loadPopulationData();
         })
         .catch(error => {
             console.error('Error loading turnout data:', error);
             // Continue loading map without turnout data
+            loadPopulationData();
+        });
+}
+
+function loadPopulationData() {
+    fetch('Data/vt-town-pops-2022.csv')
+        .then(response => response.text())
+        .then(csvData => {
+            parsePopulationData(csvData);
+            loadVermontGeoJSON();
+            createPopulationScatterPlot();
+        })
+        .catch(error => {
+            console.error('Error loading population data:', error);
             loadVermontGeoJSON();
         });
+}
+
+function parsePopulationData(csvText) {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        
+        const values = lines[i].split(',').map(v => v.trim());
+        const townName = values[0]?.toUpperCase();
+        const population = parseFloat(values[1]);
+        
+        if (townName && !isNaN(population)) {
+            populationData[townName] = population;
+        }
+    }
+    
+    console.log('Loaded population data for', Object.keys(populationData).length, 'towns');
 }
 
 function parseTurnoutData(csvText) {
@@ -112,6 +146,7 @@ function loadVermontGeoJSON() {
         .then(response => response.json())
         .then(data => {
             vermontGeoJSONData = data;
+            setupTownSearchAutocomplete();
             renderGeoJSON();
             addYearControl();
             
@@ -123,6 +158,35 @@ function loadVermontGeoJSON() {
             // Fallback: show a message to user
             showErrorMessage('Unable to load town data. Please refresh the page.');
         });
+}
+
+function setupTownSearchAutocomplete() {
+    const searchInput = document.getElementById('town-search-input');
+    const datalist = document.getElementById('town-search-options');
+
+    if (!searchInput || !datalist || !vermontGeoJSONData?.features) {
+        return;
+    }
+
+    const townNames = vermontGeoJSONData.features
+        .map(feature => (feature.properties.TOWNNAMEMC || feature.properties.TOWNNAME || '').trim())
+        .filter(Boolean);
+
+    const uniqueSortedTowns = [...new Set(townNames)].sort((a, b) => a.localeCompare(b));
+
+    datalist.innerHTML = '';
+    uniqueSortedTowns.forEach(townName => {
+        const option = document.createElement('option');
+        option.value = townName;
+        datalist.appendChild(option);
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            zoomToTown(searchInput.value);
+        }
+    });
 }
 
 function renderGeoJSON() {
@@ -558,6 +622,192 @@ function createAvgTurnoutChart() {
         containerId: 'avg-turnout-chart',
         title: 'Average Statewide Turnout by Year'
     });
+}
+
+function createPopulationScatterPlot() {
+    // Collect data points for 2022
+    const scatterData = [];
+    const year = '2022';
+    
+    Object.keys(turnoutData).forEach(key => {
+        const entry = turnoutData[key];
+        if (entry.year !== year) return;
+        
+        const townName = entry.town.trim().toUpperCase();
+        const population = populationData[townName];
+        const floorTurnout = entry.floorVoteTurnout;
+        
+        if (population !== undefined && floorTurnout !== null) {
+            scatterData.push({
+                town: entry.town,
+                population: population,
+                floorTurnout: floorTurnout * 100
+            });
+
+            // remove town "Chelsea" from scatterData due to error in raw data
+            if (entry.town.trim().toUpperCase() === 'CHELSEA') {
+                scatterData.pop();
+            }
+        }
+    });
+    
+    console.log('Scatter plot data for 2022:', scatterData.length, 'towns');
+    
+    if (scatterData.length === 0) {
+        console.warn('No scatter plot data available');
+        return;
+    }
+    
+    renderScatterPlot(scatterData, {
+        containerId: 'population-turnout-scatter',
+        title: 'Population vs. Floor Vote Turnout (2022)',
+        subtitle: 'Data based on most recent year floor vote data provided by Secretary of State VT.'
+    });
+}
+
+function renderScatterPlot(data, options = {}) {
+    const containerId = options.containerId || 'population-turnout-scatter';
+    const chartTitle = options.title || 'Population vs. Floor Vote Turnout';
+    const chartSubtitle = options.subtitle || '';
+    const container = d3.select(`#${containerId}`);
+    container.selectAll('*').remove();
+    
+    // Set up dimensions
+    const margin = { top: 40, right: 60, bottom: 60, left: 70 };
+    const containerWidth = document.getElementById(containerId).offsetWidth || 600;
+    const width = containerWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+    
+    // Create SVG
+    const svg = container.append('svg')
+        .attr('width', '100%')
+        .attr('height', height + margin.top + margin.bottom)
+        .attr('viewBox', `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Scales
+    const xScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.population) * 1.05])
+        .range([0, width]);
+    
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.floorTurnout) * 1.1])
+        .range([height, 0]);
+    
+    // Axes
+    const xAxis = d3.axisBottom(xScale)
+        .ticks(6)
+        .tickFormat(d => d >= 1000 ? (d / 1000).toFixed(1) + 'k' : d);
+    
+    const yAxis = d3.axisLeft(yScale)
+        .ticks(5)
+        .tickFormat(d => d.toFixed(0) + '%');
+    
+    svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(xAxis)
+        .selectAll('text')
+        .style('font-size', '12px');
+    
+    svg.append('g')
+        .call(yAxis)
+        .selectAll('text')
+        .style('font-size', '12px');
+    
+    // Grid lines
+    svg.append('g')
+        .attr('class', 'grid')
+        .attr('opacity', 0.1)
+        .call(d3.axisLeft(yScale)
+            .tickSize(-width)
+            .tickFormat(''));
+    
+    // Create tooltip before circles so it can be referenced
+    const tooltip = container.append('div')
+        .attr('class', 'chart-tooltip')
+        .style('opacity', 0);
+    
+    // Add circles for each data point
+    const color = '#1a5f3f';
+    
+    svg.selectAll('.dot')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('class', 'dot')
+        .attr('cx', d => xScale(d.population))
+        .attr('cy', d => yScale(d.floorTurnout))
+        .attr('r', 4)
+        .attr('fill', color)
+        .attr('opacity', 0.6)
+        .attr('stroke', color)
+        .attr('stroke-width', 1)
+        .on('mouseover', function(event, d) {
+            d3.select(this)
+                .attr('r', 6)
+                .attr('opacity', 1);
+            
+            const containerRect = document.getElementById(containerId).getBoundingClientRect();
+            const localX = event.clientX - containerRect.left;
+            const localY = event.clientY - containerRect.top;
+            
+            tooltip.html(`<strong>${d.town}</strong><br/>Population: ${d.population.toLocaleString()}<br/>Floor Vote Turnout: ${d.floorTurnout.toFixed(1)}%`)
+                .style('left', (localX + 10) + 'px')
+                .style('top', (localY - 30) + 'px')
+                .style('opacity', 1);
+        })
+        .on('mouseout', function() {
+            d3.select(this)
+                .attr('r', 4)
+                .attr('opacity', 0.6);
+            
+            tooltip.style('opacity', 0);
+        })
+        .on('mousemove', function(event) {
+            const containerRect = document.getElementById(containerId).getBoundingClientRect();
+            const localX = event.clientX - containerRect.left;
+            const localY = event.clientY - containerRect.top;
+            
+            tooltip
+                .style('left', (localX + 10) + 'px')
+                .style('top', (localY - 30) + 'px');
+        });
+    
+    // Title
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', -40)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '16px')
+        .style('font-weight', 'bold')
+        .text(chartTitle);
+
+    // subtitle
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', -20)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .style('fill', '#666')
+        .text(chartSubtitle);
+    
+    // Axis labels
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -55)
+        .attr('x', -height / 2)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .text('Floor Vote Turnout (%)');
+    
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + 50)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .text('Town Population (ACS Survey)');
 }
 
 function createTownTurnoutChart(townName) {

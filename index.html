@@ -11,7 +11,7 @@
 <body>
     <header>
         <div class="container">
-            <h1>Vermont Town Meeting Day 2026</h1>
+            <h1>10 Years of Vermont Town Meeting Day Turnout</h1>
             <p class="subtitle">Interactive Turnout Statistics & Polling Locations</p>
         </div>
     </header>
@@ -21,14 +21,19 @@
             <p class="intro-text">
                 Town Meeting Day, celebrated annually on the first Tuesday in March, is a cornerstone of 
                 Vermont's democratic tradition. This interactive map displays historical turnout statistics 
-                from municipalities across Vermont. Explore each town to view floor vote rates and Australian ballot rates (which include absentee ballot counts). Red markers indicate polling locations. Use the year selector to 
-                compare turnout across different years.
+                from municipalities across Vermont. Explore each town to view floor vote rates and Australian ballot rates (which include absentee ballot counts). 
+            </p>
+            <br>
+            <p class="intro-text">
+                Many towns offer a mix of Australian ballot and floor vote depending on the questions at hand. As a result, percentages do not add to 100%. Red markers indicate polling locations. Use the year selector to 
+                compare turnout across different years. Data was sourced from Secretary of State VT Office and is available <a href="https://sos.vermont.gov/elections/election-info-resources/town-meeting-local-elections/">here</a>.
             </p>
         </div>
     </section>
     <div class="container">
         <div id="town-search">
-            <input type="text" placeholder="Search for a town..." id="town-search-input">
+            <input type="text" placeholder="Search for a town..." id="town-search-input" list="town-search-options">
+            <datalist id="town-search-options"></datalist>
             <button id="town-search-button" onclick="zoomToTown(document.getElementById('town-search-input').value)">Search</button>
         </div>
     </div>
@@ -40,14 +45,40 @@
     </section>
     
     <section class="chart-section">
+        
         <div class="container">
-            <div id="avg-turnout-chart"></div>
+            <h2>Voting Trends across Vermont</h2>
+            <br>
+            <div class="charts-grid">
+                <div>
+                    <h3>Floor voting has declined, with surges in Australian ballot participation during general election years</h3>
+                    <br>
+                    <p>The percentage of Vermonters showing up in person for floor vote issues has decreased over time. Notably, 2016 and 2020 (both general election years) saw a spike in Australian ballot participation.</p>
+                    <br>
+                    <p>For more details, see <a href="https://vtcommunitynews.org/2026/03/01/post-pandemic-more-vermonters-are-voting-by-australian-ballot-for-town-meeting/">this story from VT Community News Service</a>.</p>
+                </div>
+                <div id="avg-turnout-chart"></div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="container">
+            <div class="charts-grid">
+                <div>
+                    <h3>Floor voting participation is more common in small towns</h3>
+                    <br>
+                    <p>In general, we see a higher percentage of registered voters showing up in person to debate local issues in smaller population towns. Data shown here is from 2022, the last year the Secretary of State provided complete turnout data for all towns.</p>
+                    <br>
+                    <p>Hover over data points in the scatter plot to see individual town details.</p>
+                </div>
+                <div id="population-turnout-scatter"></div>
+            </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Vermont Town Meeting Day. Data updated regularly. <a href="#" target="_blank">Source Data</a></p>
+            <p>&copy; This website was created through a partnership between the <a href="https://www.uvm.edu/ccn">Center for Community News</a> and <a href="https://verso.w3.uvm.edu/">VERSO</a>.</p>
         </div>
     </footer>
 

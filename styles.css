@@ -25,6 +25,10 @@ body {
     flex-direction: column;
 }
 
+p {
+    line-height: 1.4;
+}
+
 header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
@@ -58,7 +62,7 @@ header .subtitle {
 .intro-text {
     font-size: 1.05rem;
     line-height: 1.7;
-    color: var(--text-light);
+    color: var(--text-dark);
     max-width: 900px;
     margin: 0 auto;
     margin-bottom: 0;
@@ -69,6 +73,13 @@ header .subtitle {
     background-color: white;
     padding: 3rem 0;
     border-bottom: 1px solid var(--border-light);
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
 }
 
 #town-search {
@@ -105,6 +116,18 @@ header .subtitle {
     background-color: #fafafa;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+#population-turnout-scatter {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .chart-tooltip {
@@ -220,7 +243,6 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -236,6 +258,11 @@ footer a:hover {
     
     .chart-section {
         padding: 2rem 0;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .map-section {
