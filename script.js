@@ -398,7 +398,14 @@ function displayPollingPlaces(pollingPlaces) {
     console.log(`Loaded ${pollingPlaces.length} polling places`);
 }
 
+let yearControl = null;
+
 function addYearControl() {
+    // Remove existing control if present
+    if (yearControl) {
+        map.removeControl(yearControl);
+    }
+    
     // Set fixed year range from 2014 to 2024
     const minYear = 2014;
     const maxYear = 2024;
@@ -466,7 +473,7 @@ function addYearControl() {
         }
     });
     
-    new YearControl().addTo(map);
+    yearControl = new YearControl().addTo(map);
 }
 
 function addLayerControl() {
