@@ -165,9 +165,9 @@ function getStyleForFeature(feature) {
     } else if (turnoutRate >= 20) {
         color = '#4ca87a'; // Light green
     } else if (turnoutRate >= 10) {
-        color = '#f0ad4e'; // Amber - moderate
+        color = '#f0dd4e'; // Amber - moderate
     } else {
-        color = '#c9302c'; // Red - low turnout
+        color = '#d88e04'; // Red - low turnout
     }
 
     return {
@@ -201,18 +201,11 @@ function onEachFeature(feature, layer) {
         if (data.floorVoteTurnout !== null) {
             const floorPct = (data.floorVoteTurnout * 100).toFixed(1);
             turnoutInfo += `<p><strong>Floor Vote Turnout:</strong> ${floorPct}%</p>`;
+        } else {
+            turnoutInfo += `<p><strong>Floor Vote Turnout:</strong> No data provided</p>`;
         }
     }
 
-    // create variable to store total turnout of population, which is australian ballot turnout + floor vote turnout (if available)
-    const totalTurnout = [data?.australianBallotTurnout, data?.floorVoteTurnout]
-        .filter(v => v !== null)
-        .reduce((sum, v) => sum + v, 0);
-    
-    if (totalTurnout > 0) {
-        const totalPct = (totalTurnout * 100).toFixed(1);
-        turnoutInfo += `<p><strong>Total Recorded Voter Turnout:</strong> ${totalPct}%</p>`;
-    }
     
     const popupContent = `
         <div class="town-popup">
@@ -874,8 +867,8 @@ function addLegend() {
             { min: 40, label: '40%+ Turnout', color: '#1a5f3f' },
             { min: 30, label: '30-39% Turnout', color: '#2a7f5f' },
             { min: 20, label: '20-29% Turnout', color: '#4ca87a' },
-            { min: 10, label: '10-19% Turnout', color: '#f0ad4e' },
-            { min: 0, label: '0-9% Turnout', color: '#c9302c' },
+            { min: 10, label: '10-19% Turnout', color: '#f0dd4e' },
+            { min: 0, label: '0-9% Turnout', color: '#d88e04' },
             { min: -1, label: 'No Data', color: '#cccccc' }
         ];
         
