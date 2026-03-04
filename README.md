@@ -1,274 +1,206 @@
-# Vermont Town Meeting Day 2026 Results
+# Vermont Town Meeting Day Turnout Map (2014–2024)
 
-An interactive static website displaying Vermont Town Meeting Day results and participation data mapped across Vermont municipalities using OpenStreetMap and official Vermont town boundary GeoJSON.
+Interactive, static web map and charts for Vermont town-level turnout trends, including:
+- choropleth map of turnout by municipality,
+- polling-place point layer,
+- year and metric controls,
+- statewide and town-level trend charts.
 
-## Features
+This project is intended for lightweight publishing (no backend required) and reproducible data updates.
 
-- 📍 **Interactive Map**: Full-width map of Vermont municipalities powered by Leaflet.js and OpenStreetMap
-- 📊 **Real Town Boundaries**: Uses official Vermont town boundary polygons from VCGI
-- 🎨 **Responsive Design**: Mobile-friendly interface with clean, modern styling
-- ⚡ **Static Site**: No backend required - deploy anywhere with a simple script
-- 🗺️ **Accurate Geospatial Data**: Sourced from Vermont Center for Geographic Information
+## Table of Contents
 
-## File Structure
+- [Project Overview](#project-overview)
+- [What the App Shows](#what-the-app-shows)
+- [Repository Structure](#repository-structure)
+- [Data Inputs](#data-inputs)
+- [Local Development](#local-development)
+- [Data Update Workflow](#data-update-workflow)
+- [Geocoding Polling Places](#geocoding-polling-places)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Attribution and License](#attribution-and-license)
 
-```
+## Project Overview
+
+The app is a static Leaflet + D3 site that loads local CSV/GeoJSON files at runtime and renders:
+- a town polygon choropleth (`vermont-towns.geojson`),
+- polling place markers (`Data/geocoded_polling_places.csv`),
+- turnout trends from `Data/Turnout Statistics/Combined/town-meeting-absentee-col-rm.csv`,
+- a population vs turnout scatterplot from `Data/vt-town-pops-2022.csv`.
+
+No build step is required.
+
+## What the App Shows
+
+### Map interactions
+- Town fill colors by selected turnout metric (`Australian Ballot` or `Floor Vote`)
+- Year slider covering **2014–2024**
+- Layer toggles for turnout polygons and polling places
+- Town search with autocomplete
+- Town popup with year-specific values
+- Town sidebar chart (selected town turnout over time)
+
+### Charts
+- Statewide average turnout trend by year
+- Population vs floor-vote turnout scatterplot (2022)
+
+## Repository Structure
+
+```text
 .
-├── index.html              # Main HTML file with intro section
-├── styles.css              # Responsive styling
-├── script.js               # Leaflet map initialization and interactions
-├── vermont-towns.geojson   # Vermont town boundaries from VCGI
-├── deploy.sh               # GitHub Pages deployment script
-├── .gitignore              # Git ignore patterns
-├── README.md               # This file
-└── LICENSE                 # License file
+├── index.html
+├── styles.css
+├── script.js
+├── vermont-towns.geojson
+├── deploy.sh
+├── geocode_polling_places.py
+├── vt-town-meeting-map-2026.html
+├── README.md
+├── LICENSE
+├── analysis/
+│   └── exploration.ipynb
+└── Data/
+    ├── geocoded_polling_places.csv
+    ├── clean-tabula-2025_vermont_election_polling_places.csv
+    ├── vt-town-pops-2022.csv
+    ├── vt-town-pops.csv
+    ├── Turnout Statistics/
+    │   ├── Combined/
+    │   └── Raw/
+    └── Voting Methods/
+        ├── Combined/
+        └── Raw/
 ```
 
-## Data Sources
+### Primary runtime entry point
+- `index.html` is the main app page.
+- `vt-town-meeting-map-2026.html` is an alternate map-focused page.
 
-### Town Boundaries
-- **Source**: [VT Data - Town Boundaries](https://geodata.vermont.gov/datasets/VCGI::vt-data-town-boundaries-1/about)
-- **Provider**: Vermont Center for Geographic Information (VCGI)
-- **Dataset**: FS_VCGI_OPENDATA_Boundary_BNDHASH_poly_towns_SP_v1
-- **Features**: 256 Vermont towns with accurate polygon boundaries
-- **Format**: GeoJSON with town properties and geometric boundaries
+## Data Inputs
 
-### Population Data
-- **Source**: [List of municipalities in Vermont](https://en.wikipedia.org/wiki/List_of_municipalities_in_Vermont)
-- **Data**: 2020 U.S. Census population figures
-- **Coverage**: 237 of 256 Vermont municipalities (19 unincorporated/very small towns have no population data)
+The current app expects these files and paths to exist exactly:
 
-## Data Integration
+- `vermont-towns.geojson`
+- `Data/Turnout Statistics/Combined/town-meeting-absentee-col-rm.csv`
+- `Data/vt-town-pops-2022.csv`
+- `Data/geocoded_polling_places.csv`
 
-### GeoJSON Properties
+### Turnout CSV expectations
+The JS parser reads columns by index in this order:
+1. town
+2. floor vote turnout
+3. australian ballot turnout
+4. year
 
-Each feature in the GeoJSON contains the following properties from VCGI:
+Turnout values are expected as decimals (e.g., `0.245`), not percentages.
 
-```json
-{
-  "OBJECTID": 251,
-  "FIPS6": 21090,
-  "TOWNNAME": "PROCTOR",
-  "TOWNNAMEMC": "Proctor",
-  "CNTY": 21,
-  "TOWNGEOID": "5002157250",
-  "Shape__Area": 19627122.625659943,
-  "Shape__Length": 32988.08634250913,
-  "population": 1763
-}
-```
-
-**Field Descriptions:**
-- `OBJECTID`: Unique feature identifier
-- `FIPS6`: Federal Information Processing Standard 6-digit code (unique town identifier)
-- `TOWNNAME`: Town name in uppercase (e.g., "PROCTOR")
-- `TOWNNAMEMC`: Town name in mixed case (e.g., "Proctor") - **Used for display on the map**
-- `CNTY`: County code numeric identifier
-- `TOWNGEOID`: Census tract identifier
-- `Shape__Area`: Polygon area in square units
-- `Shape__Length`: Polygon perimeter in linear units
-- `population`: Population data from Wikipedia (2020 Census)
-
-### Adding Custom Meeting Data
-
-You can augment the official boundaries with your Town Meeting results by adding custom properties:
-
-```json
-{
-  "properties": {
-    "TOWNNAME": "PROCTOR",
-    "TOWNNAMEMC": "Proctor",
-    "participation": 78,          // Add: Participation rate (0-100)
-    "attendance": 450,            // Add: Meeting attendance
-    "articlesDiscussed": 12,      // Add: Number of articles
-    "meetingDate": "2026-03-03",  // Add: Meeting date
-    "location": "Town Hall"       // Add: Meeting location
-  },
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [[...]]
-  }
-}
-```
-
-## Setup
+## Local Development
 
 ### Prerequisites
 - Git
-- A GitHub account (for GitHub Pages deployment)
+- Any static HTTP server (examples below)
+- Optional (for geocoding script): Python 3.9+
 
-### Local Development
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/vt-town-meeting-2026.git
-   cd vt-town-meeting-2026
-   ```
-
-2. **Open locally** (any of these methods)
-   - **Python 3**: `python -m http.server 8000`
-   - **Python 2**: `python -m SimpleHTTPServer 8000`
-   - **Node.js**: `npx http-server`
-   - **Live Server** (VS Code): Install Live Server extension and click "Go Live"
-
-3. **Visit** `http://localhost:8000` in your browser
-
-## Customization
-
-### Update Town Meeting Data
-
-Edit `vermont-towns.geojson` to add participation rates and meeting information. The file uses official VCGI town boundaries which you can enhance with your data:
+### Run locally
 
 ```bash
-# Edit the GeoJSON file with your text editor
-# Add properties like:
-# - participation: percentage of eligible voters who attended
-# - attendance: number of attendees
-# - articlesCount: number of articles/items discussed
-# - outcomes: brief summary of major decisions
+git clone https://github.com/<your-org-or-user>/vt-town-meeting-2026.git
+cd vt-town-meeting-2026
+python3 -m http.server 8000
 ```
 
-### Change Color Scheme
+Open: <http://localhost:8000>
 
-Modify the participation rate thresholds in `script.js`:
+Alternative static servers:
+- `npx http-server`
+- VS Code Live Server extension
 
-```javascript
-if (participationRate >= 75) {
-    color = '#1a5f3f'; // Dark green - high participation
-} else if (participationRate >= 50) {
-    color = '#2a7f5f'; // Medium green
-} else if (participationRate >= 25) {
-    color = '#f0ad4e'; // Amber - moderate
-} else {
-    color = '#c9302c'; // Red - low participation
-}
+## Data Update Workflow
+
+Use this sequence to keep updates reproducible:
+
+1. **Update raw turnout or voting-method files** under `Data/.../Raw/`.
+2. **Regenerate combined files** (R Markdown notebooks in `Data/.../Raw/` if you are using that workflow).
+3. **Refresh geocoded polling places** if source polling addresses changed.
+4. **Verify app loads without console errors** and spot-check several towns/years.
+5. **Commit data + code together** so data and app logic stay in sync.
+
+## Geocoding Polling Places
+
+Script: `geocode_polling_places.py`
+
+### Install dependencies
+
+```bash
+python3 -m pip install pandas geopy
 ```
 
-### Update Intro Text
+### Run
 
-Edit the intro paragraph in `index.html`:
-
-```html
-<p class="intro-text">
-    Your custom text here...
-</p>
+```bash
+python3 geocode_polling_places.py
 ```
+
+### Input/output
+- Input: `Data/clean-tabula-2025_vermont_election_polling_places.csv`
+- Output: `Data/geocoded_polling_places.csv`
+
+Notes:
+- Uses Nominatim via `geopy`.
+- Includes rate limiting (`1 request/second`) to respect service usage.
 
 ## Deployment
 
-### GitHub Pages Deployment
+### Option A: GitHub Pages with current script
 
-1. **Initialize Git (if not already done)**
-   ```bash
-   git init
-   git remote add origin https://github.com/yourusername/vt-town-meeting-2026.git
-   ```
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
 
-2. **Commit your changes**
-   ```bash
-   git add .
-   git commit -m "Initial commit: Vermont Town Meeting website"
-   git push -u origin main
-   ```
+### Important deployment note
 
-3. **Enable GitHub Pages**
-   - Go to your repository on GitHub
-   - Settings → Pages
-   - Select "Deploy from a branch"
-   - Choose `gh-pages` branch and save
+The current `deploy.sh` copies top-level files but **does not copy the `Data/` directory**. Since `index.html` fetches data from `Data/...`, deploys will be incomplete unless you include `Data/` in your deployment process.
 
-4. **Run the deployment script**
-   ```bash
-   ./deploy.sh
-   ```
+Recommended actions before relying on `deploy.sh` for production:
+- update `deploy.sh` to copy `Data/` recursively,
+- run a smoke test on the deployed site (map + both charts + polling layer).
 
-   The script will:
-   - Create/update the `gh-pages` branch
-   - Copy all necessary files
-   - Create `.nojekyll` file for proper static site serving
-   - Push to GitHub automatically
+### Option B: Generic static hosting
 
-5. **Your site is live!**
-   - Access it at: `https://yourusername.github.io/vt-town-meeting-2026`
-   - May take 1-2 minutes for changes to appear
+Deploy the full repository contents (including `Data/`) to any static host:
+- GitHub Pages
+- Netlify
+- Vercel
+- S3/CloudFront
+- University web hosting
 
-### Alternative Deployment Methods
+## Troubleshooting
 
-**Netlify**
-- Connect your GitHub repo to Netlify
-- Deploy on push automatically
-- No build configuration needed
+- **Blank map or missing charts:** verify you are serving over HTTP, not opening files directly via `file://`.
+- **Fetch 404 errors:** confirm data paths and capitalization match exactly.
+- **No polling markers:** check `Data/geocoded_polling_places.csv` has `latitude`, `longitude`, and `geocode_status=success` rows.
+- **Town search misses values:** ensure names in data match town names in `vermont-towns.geojson`.
+- **Mobile controls not visible:** year and metric controls are intentionally hidden on small screens.
 
-**Vercel**
-- Connect GitHub repo to Vercel
-- Deploy automatically on push
+## Attribution and License
 
-**Generic Static Hosting**
-- Simply upload all files to your hosting provider
-- No build step required
-
-## Updating Data
-
-To update town meeting results:
-
-1. Edit `vermont-towns.geojson` with new participation and attendance data
-2. Commit and push changes:
-   ```bash
-   git add vermont-towns.geojson
-   git commit -m "Update town meeting results - 2026 data"
-   git push
-   ```
-3. Run deploy script (or updates automatically if using CI/CD):
-   ```bash
-   ./deploy.sh
-   ```
-
-## Browser Compatibility
-
-- Chrome/Edge 60+
-- Firefox 55+
-- Safari 12+
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Official Data Attribution
-
-**VT Data - Town Boundaries**
+### Geospatial boundaries
 - Source: Vermont Center for Geographic Information (VCGI)
-- License: [Open Geodata Policy](https://files.vcgi.vermont.gov/other/policies/vermont-open-geodata-policy.html)
-- Updated: Regularly by VCGI
-- Dataset: FS_VCGI_OPENDATA_Boundary_BNDHASH_poly_towns_SP_v1
+- Dataset: VT town boundaries (GeoJSON exported in this repo)
+- Policy: Vermont Open Geodata Policy (attribution required)
 
-When using this data, please attribute the Vermont Center for Geographic Information.
+### Turnout and polling information
+- Source context: Vermont Secretary of State election resources
+- Additional transformations and combined files are maintained in this repository
 
-## License
+### License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+Code in this repository is licensed under MIT (see `LICENSE`).
 
-The underlying geospatial data (vermont-towns.geojson) is subject to the Vermont Open Geodata Policy and attribution to VCGI is required.
-
-## Contributing
-
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## Resources
-
-- [Leaflet.js Documentation](https://leafletjs.com/)
-- [GeoJSON Specification](https://geojson.org/)
-- [OpenStreetMap](https://www.openstreetmap.org/)
-- [GitHub Pages Guide](https://pages.github.com/)
-- [Vermont Center for Geographic Information (VCGI)](https://vcgi.vermont.gov/)
-- [Vermont Open Geodata Portal](https://geodata.vermont.gov/)
-
-## Support
-
-For issues, questions, or suggestions, please open a GitHub issue.
+Data may have separate attribution and reuse requirements from their original providers. Always include proper source attribution when republishing derived outputs.
 
 ---
 
-**Last Updated:** February 2026  
-**Data Source:** Vermont Center for Geographic Information (VCGI)  
-**GeoJSON Version:** Updated regularly from official VCGI sources
+Maintainer tip: if you add or rename data files, update both `script.js` fetch paths and this README in the same PR.
