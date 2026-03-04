@@ -8,6 +8,9 @@ Interactive, static web map and charts for Vermont town-level turnout trends, in
 
 This project is intended for lightweight publishing (no backend required) and reproducible data updates.
 
+## Website
+[https://uvm-ccn.github.io/vt-town-meeting-2026/](https://uvm-ccn.github.io/vt-town-meeting-2026/)
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
